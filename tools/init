@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import subprocess
+
+LOGO = " _  _        _       \n/ \\|_) _ __ |_| o  __\n\\_/|  (/_| || | |  | "
+
+COMMAND_TREE = {
+    "build": {
+        "__exec__": "./tools/build/build.sh",
+    },
+    "run": {
+        "__exec__": "",
+        "server": {"__exec__": "./tools/dev/startserver.sh"},
+        "client": {"__exec__": ""},
+    },
+}
+
+SYSTEM_MAJOR = sys.version_info.major
+SYSTEM_MINOR = sys.version_info.minor
+
+EXPECTED_MAJOR = int(os.environ.get("EXPECTED_MAJOR"))
+EXPECTED_MINOR = int(os.environ.get("EXPECTED_MINOR"))
+
+if EXPECTED_MAJOR != SYSTEM_MAJOR or EXPECTED_MINOR > SYSTEM_MINOR:
+    print(
+        f"\033[31mPython {EXPECTED_MAJOR} minor >={EXPECTED_MINOR} expected, but found {SYSTEM_MAJOR}.{SYSTEM_MINOR}\033[0m"
+    )
+    exit(1)
+
+
+curr: dict | None = COMMAND_TREE
+for arg in sys.argv[1:]:
+    if arg in curr:
+        curr = curr[arg]
+
+    else:
+        break
+else:
+    if "__exec__" in curr:
+        print(LOGO)
+        try:
+            subprocess.run(curr["__exec__"])
+            exit(0)
+        except KeyboardInterrupt:
+            print("Shutting down...")
+            exit(0)
+
+print(f"Unknown argument: {' '.join(sys.argv)}")
+exit(1)

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Paths
+export PROJECT_DIR="$(pwd)"
+export CLIENT_DIR="client"
+export SERVER_DIR="server"
+export OUTPUT_DIR="build"
+
+# Python options
+export EXPECTED_MAJOR=3
+export EXPECTED_MINOR=14
+
+# Client options
+export INDEX_OUTPUT="dist/index.html"
+
+# Color codes
+export ASCII_RED="\033[31m"
+export ASCII_GREEN="\033[32m"
+export ASCII_RESET="\033[0m"
+
+./tools/init $@

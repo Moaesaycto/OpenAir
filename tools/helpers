@@ -1,15 +1,20 @@
 #!/bin/bash
 
-PREFIX="\033[34m\033[1mINFO  │ \033[0m"
-PREFIX_ERR="\033[31m\033[1mERROR │ \033[0m"
+PREFIX="\033[44m\033[1mINFO  \033[0m "
+PREFIX_ERR="\033[41m\033[1mERROR \033[0m \033[31m"
+PREFIX_DONE="\033[42m\033[1mDONE  \033[0m \033[32m"
 
 # Helper functions
 clog() {
-	echo -e "${PREFIX}$*"
+	echo -e "${PREFIX}$*\033[0m"
 }
 
 cerr() {
-	echo -e "${PREFIX_ERR}$*" 
+	echo -e "${PREFIX_ERR}$*\033[0m"
+}
+
+cdone() {
+	echo -e "${PREFIX_DONE}$*\033[0m"
 }
 
 q() {

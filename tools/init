@@ -12,11 +12,11 @@ LOGO = r"""
 └────────────────────────────────────────┘
 """
 
-DIM="\033[2m"
-CYAN="\033[36m"
-WHITE="\033[37m"
-RESET="\033[0m"
-BOLD="\033[1m"
+DIM = "\033[2m"
+CYAN = "\033[36m"
+WHITE = "\033[37m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
 
 LOGO_COLOR = f"""
 {DIM}┌────────────────────────────────────────┐
@@ -36,7 +36,8 @@ COMMAND_TREE = {
         "server": {"__exec__": "./tools/dev/startserver.sh"},
         "client": {"__exec__": ""},
     },
-    "__exec__": None
+    "setup": {"mac": {"__exec__": "./tools/setup/mac.sh"}},
+    "__exec__": None,
 }
 
 SYSTEM_MAJOR = sys.version_info.major

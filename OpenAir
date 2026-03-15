@@ -10,8 +10,11 @@ export CLIENT_DIR="client"
 export TOOLS_DIR="tools"
 export SERVER_DIR="server"
 export OUTPUT_DIR="build"
-export CLIENT_BUILD="$PROJECT_DIR/$CLIENT_DIR/dist/index.html"
+export OPT_DIR="opt"
 
+export DUMP1090_DIR="opt/dump1090-master"
+
+export CLIENT_BUILD="$PROJECT_DIR/$CLIENT_DIR/dist/index.html"
 export HELPERS="$PROJECT_DIR/$TOOLS_DIR/helpers"
 
 # Python options

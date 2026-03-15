@@ -1,0 +1,23 @@
+#!/bin/bash
+
+PREFIX="\033[34m\033[1mINFO  │ \033[0m"
+PREFIX_ERR="\033[31m\033[1mERROR │ \033[0m"
+
+# Helper functions
+clog() {
+	echo -e "${PREFIX}$*"
+}
+
+cerr() {
+	echo -e "${PREFIX_ERR}$*" 
+}
+
+q() {
+	OUTPUT=$("$@" 2>&1)
+	STATUS=$?
+	if [ $STATUS -ne 0 ]; then
+		cerr "An error has occurred:"
+		echo "$OUTPUT"
+		exit $STATUS
+	fi
+}

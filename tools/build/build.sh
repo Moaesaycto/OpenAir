@@ -1,28 +1,56 @@
 #!/bin/bash
+source "$HELPERS"
 
-echo "Building client..."
+clog "Attempting to build $APP_NAME version $VERSION"
+clog
+
+TMPDIR=$(mktemp -d)
+trap "deactivate 2>/dev/null; rm -rf $TMPDIR" EXIT
+
+# Setting variables
+APP_FILE_NAME="$APP_NAME-v$VERSION"
+
+clog "Building client..."
 
 cd "$PROJECT_DIR/$CLIENT_DIR"
-echo "Loading dependencies via npm install..."
-npm install 2>/dev/null >/dev/null
+clog "Loading dependencies via npm install..."
+q npm install
 
-echo "Building client..."
-if ! OUTPUT=$(npm run build 2>&1); then
-	echo -e "${ASCII_RED}Failed to build client${ASCII_RESET}"
-	echo "Reasoning:"
-	echo "$OUTPUT"
-	exit 1
-fi
-echo -e "${ASCII_GREEN}Successfully built client${ASCII_RESET}"
+clog "Building client..."
+q npm run build
 
-if [ -z "$PROJECT_DIR" ] || [ -z "$OUTPUT_DIR" ]; then
-    echo "Error: PROJECT_DIR or OUTPUT_DIR is not set"
-    exit 1
-fi
+cd ..
+clog "${ASCII_GREEN}Successfully built client${ASCII_RESET}"
+clog
 
-BUILD_PATH="$PROJECT_DIR/$OUTPUT_DIR"
-if [ -d "$BUILD_PATH" ]; then
-	rm -rf "$BUILD_PATH"
-fi
-mkdir "$BUILD_PATH"
-cp "$PROJECT_DIR/$CLIENT_DIR/$INDEX_OUTPUT" "$BUILD_PATH/index.html"
+# Create prod environment
+clog "Entering production build virtual environment"
+python3 -m venv prod-venv
+source prod-venv/bin/activate
+q pip install pip-tools pyinstaller pyinstaller-hooks-contrib
+
+clog "Compiling production requirements"
+q pip install -r "$SERVER_DIR/prod-requirements.txt"
+
+# PyInstaller stuff
+q pyi-makespec "$PROJECT_DIR/$SERVER_DIR/App.py" \
+	--onefile --windowed --name "$APP_FILE_NAME" \
+	--specpath "$TMPDIR" \
+	--add-data "$CLIENT_BUILD:static" \
+	--hidden-import="server"
+
+clog "Building executable file"
+
+DIST_PATH="$PROJECT_DIR/dist"
+BUILD_PATH="$TMPDIR/build"
+
+pyinstaller "$TMPDIR/$APP_FILE_NAME.spec" \
+	--distpath "$DIST_PATH" -y \
+	--workpath "$BUILD_PATH" \
+	--log-level ERROR
+
+# It worked!
+clog "${ASCII_GREEN}Successfully built executable file${ASCII_RESET}"
+clog
+clog "Check $DIST_PATH/$APP_FILE_NAME for the runnable file"
+echo

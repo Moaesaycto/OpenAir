@@ -4,7 +4,28 @@ import sys
 import os
 import subprocess
 
-LOGO = " _  _        _       \n/ \\|_) _ __ |_| o  __\n\\_/|  (/_| || | |  | "
+LOGO = r"""
+┌────────────────────────────────────────┐
+│  _  _        _              __!__      │
+│ / \|_) _ __ |_| o  __   _____(_)_____  │
+│ \_/|  (/_| || | |  |       !  !  !     │
+└────────────────────────────────────────┘
+"""
+
+DIM="\033[2m"
+CYAN="\033[36m"
+WHITE="\033[37m"
+RESET="\033[0m"
+BOLD="\033[1m"
+
+LOGO_COLOR = f"""
+{DIM}┌────────────────────────────────────────┐
+│  {RESET}{CYAN}_  _        {BOLD}_              {WHITE}__!__      {RESET}{WHITE}{DIM}│
+│ {RESET}{CYAN}/ \\|_) _ __ {BOLD}|_| o  __  {WHITE} _____(_)_____  {RESET}{WHITE}{DIM}│
+│ {RESET}{CYAN}\\_/|  (/_| |{BOLD}| | |  |       {WHITE}!  !  !     {RESET}{WHITE}{DIM}│
+└────────────────────────────────────────┘
+{RESET}"""
+
 
 COMMAND_TREE = {
     "build": {
@@ -15,6 +36,7 @@ COMMAND_TREE = {
         "server": {"__exec__": "./tools/dev/startserver.sh"},
         "client": {"__exec__": ""},
     },
+    "__exec__": None
 }
 
 SYSTEM_MAJOR = sys.version_info.major
@@ -39,7 +61,9 @@ for arg in sys.argv[1:]:
         break
 else:
     if "__exec__" in curr:
-        print(LOGO)
+        print(LOGO_COLOR)
+        if curr["__exec__"] is None:
+            exit(0)
         try:
             subprocess.run(curr["__exec__"])
             exit(0)

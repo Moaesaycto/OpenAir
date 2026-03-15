@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-
 VENV_DIR=".venv"
-APP="main:app"
+APP="server:app"
 HOST="127.0.0.1"
 PORT="8000"
 
@@ -20,7 +19,7 @@ source "$VENV_DIR/bin/activate"
 
 echo "Installing dependencies..."
 pip install --upgrade pip -q
-pip install -r requirements.txt -q
+pip install -r dev-requirements.txt -q
 
 echo "Starting server at http://$HOST:$PORT"
 

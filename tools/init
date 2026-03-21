@@ -34,7 +34,7 @@ COMMAND_TREE = {
     "run": {
         "__exec__": "",
         "server": {"__exec__": "./tools/dev/startserver.sh"},
-        "client": {"__exec__": ""},
+        "client": {"__exec__": "./tools/dev/startclient.sh"},
     },
     "setup": {"mac": {"__exec__": "./tools/setup/mac.sh"}},
     "__exec__": None,
@@ -69,7 +69,6 @@ else:
             subprocess.run(curr["__exec__"])
             exit(0)
         except KeyboardInterrupt:
-            print("Shutting down...")
             exit(0)
 
 print(f"Unknown argument: {' '.join(sys.argv)}")

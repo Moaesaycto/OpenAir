@@ -1,3 +1,4 @@
 uvicorn==0.41.0
 pywebview==6.1
 pyrtlsdr==0.4.0
+websockets==15.0.1

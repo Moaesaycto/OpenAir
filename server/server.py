@@ -36,7 +36,9 @@ async def app(scope, receive, send):
             "type": "http.response.start",
             "status": 200,
             "headers": [
-                [b"content-type", (mime or "application/octet-stream").encode()],
+                [b"content-type", b"text/html; charset=utf-8"],
+                [b"cache-control", b"no-store, no-cache, must-revalidate"],
+                [b"pragma", b"no-cache"],
             ],
         }
     )

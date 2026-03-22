@@ -5,6 +5,8 @@ import subprocess
 import sys
 import uvicorn
 import threading
+import time
+import urllib.request
 import webview
 
 
@@ -48,12 +50,27 @@ def on_closing() -> None:
     os.kill(os.getpid(), signal.SIGTERM)
 
 
+def wait_for_server(host: str, port: int, timeout: int = 10) -> bool:
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            urllib.request.urlopen(f"http://{host}:{port}", timeout=1)
+            return True
+        except Exception:
+            time.sleep(0.1)
+    return False
+
+
 if __name__ == "__main__":
     dump1090_thread = threading.Thread(target=start_dump1090, daemon=True)
     dump1090_thread.start()
 
     server_thread = threading.Thread(target=start_server, daemon=True)
     server_thread.start()
+    
+    if not wait_for_server(HOST, PORT):
+        print("Server failed to start", flush=True)
+        sys.exit(1)
 
     window = webview.create_window("Open Air", f"http://{HOST}:{PORT}")
     window.events.closing += on_closing

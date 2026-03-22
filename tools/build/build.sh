@@ -42,8 +42,8 @@ cd "$PROJECT_DIR"
 
 # Create prod environment
 clog "Entering production build virtual environment"
-python3 -m venv prod-venv
-source prod-venv/bin/activate
+python3 -m venv "$TMPDIR/prod-venv"
+source "$TMPDIR/prod-venv/bin/activate"
 q pip install pip-tools pyinstaller pyinstaller-hooks-contrib
 
 clog "Compiling production requirements"
@@ -68,7 +68,6 @@ pyinstaller "$TMPDIR/$APP_FILE_NAME.spec" \
 	--log-level ERROR
 
 # It worked!
-rm -rf "$PROJECT_DIR/prod-venv"
 cdone "Successfully built executable file"
 clog
 clog "Check $DIST_PATH/$APP_FILE_NAME for the runnable file"

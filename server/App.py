@@ -1,25 +1,30 @@
-import threading
-import webview
-import uvicorn
 import os
-import sys
-import subprocess
 import signal
 import socket
-import time
+import subprocess
+import sys
+import uvicorn
+import threading
+import webview
 
-from util.helpers import find_free_port
 
-IS_DEV = os.environ.get("APP_ENV") == "development"
+def find_free_port() -> str:
+    """Dynamic port to avoid collision"""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
 
-HOST = "127.0.0.1"
-PORT = find_free_port()
+
+HOST: str = "127.0.0.1"
+PORT: str = find_free_port()
 os.environ["APP_PORT"] = str(PORT)
 
 BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 DUMPS1090_PATH = os.path.join(BASE_DIR, "dump1090")
 
 dump1090_process = None
+stop_event = threading.Event()
+
 
 def start_server() -> None:
     uvicorn.run("server:app", host=HOST, port=PORT)
@@ -33,22 +38,26 @@ def start_dump1090() -> None:
 
 
 def read_dump1090() -> None:
-    while True:
+    while not stop_event.is_set():
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(1)
                 s.connect(("localhost", 30003))
                 print("Connected to dump1090", flush=True)
-                while True:
-                    data = s.recv(1024).decode("utf-8", errors="ignore")
-                    if not data:
-                        break
-                    print(data, end="", flush=True)
-        except ConnectionRefusedError:
+                while not stop_event.is_set():
+                    try:
+                        data = s.recv(1024).decode("utf-8", errors="ignore")
+                        if not data:
+                            break
+                    except socket.timeout:
+                        continue
+        except (ConnectionRefusedError, OSError):
             print("Waiting for dump1090...", flush=True)
-            time.sleep(1)
+            stop_event.wait(1)
 
 
 def on_closing() -> None:
+    stop_event.set()
     if dump1090_process:
         dump1090_process.terminate()
         dump1090_process.wait()
@@ -67,4 +76,4 @@ if __name__ == "__main__":
 
     window = webview.create_window("Open Air", f"http://{HOST}:{PORT}")
     window.events.closing += on_closing
-    webview.start(debug=True)
+    webview.start()

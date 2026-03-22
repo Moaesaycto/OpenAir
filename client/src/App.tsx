@@ -21,15 +21,6 @@ function App() {
     connect();
   }, [port]);
 
-  useEffect(() => {
-    fetch(`http://localhost:${port}/gps`)
-      .then((r) => r.json())
-      .then((data) => console.log("gps:", data));
-
-    fetch(`http://localhost:${port}/ports`)
-      .then((r) => r.json())
-      .then((data) => console.log("ports:", data));
-  }, [port]);
 
   useEffect(() => {
     const socket = new WebSocket(`ws://localhost:${port}/gps-stream`);
@@ -51,7 +42,7 @@ function App() {
       }
     };
     return () => socket.close();
-  }, []);
+  }, [port]);
 
   return (
     <div className="flex flex-col min-h-screen">

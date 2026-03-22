@@ -68,6 +68,7 @@ pyinstaller "$TMPDIR/$APP_FILE_NAME.spec" \
 	--log-level ERROR
 
 # It worked!
+rm -rf "$PROJECT_DIR/prod-venv"
 cdone "Successfully built executable file"
 clog
 clog "Check $DIST_PATH/$APP_FILE_NAME for the runnable file"

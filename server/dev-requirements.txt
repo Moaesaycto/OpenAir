@@ -19,3 +19,5 @@ setuptools==82.0.1
 typing_extensions==4.15.0
 uvicorn==0.41.0
 websockets==15.0.1
+pyserial==3.5
+pynmea2==1.19.0

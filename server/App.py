@@ -8,28 +8,31 @@ import signal
 import socket
 import time
 
+from util.helpers import find_free_port
+
+IS_DEV = os.environ.get("APP_ENV") == "development"
+
 HOST = "127.0.0.1"
-PORT = 8000
+PORT = find_free_port()
+os.environ["APP_PORT"] = str(PORT)
+
 BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 DUMPS1090_PATH = os.path.join(BASE_DIR, "dump1090")
 
-BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
-
 dump1090_process = None
 
-
-def start_server():
+def start_server() -> None:
     uvicorn.run("server:app", host=HOST, port=PORT)
 
 
-def start_dump1090():
+def start_dump1090() -> None:
     global dump1090_process
     dump1090_process = subprocess.Popen(
         [DUMPS1090_PATH, "--net"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
 
-def read_dump1090():
+def read_dump1090() -> None:
     while True:
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -45,7 +48,7 @@ def read_dump1090():
             time.sleep(1)
 
 
-def on_closing():
+def on_closing() -> None:
     if dump1090_process:
         dump1090_process.terminate()
         dump1090_process.wait()
@@ -64,4 +67,4 @@ if __name__ == "__main__":
 
     window = webview.create_window("Open Air", f"http://{HOST}:{PORT}")
     window.events.closing += on_closing
-    webview.start()
+    webview.start(debug=True)

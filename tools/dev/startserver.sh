@@ -7,6 +7,9 @@ APP="server:app"
 HOST="127.0.0.1"
 PORT="8000"
 
+clog "Beginning developer server..."
+killall dump1090 2>/dev/null || true
+
 if [ ! -d "$OPT_DIR" ]; then
 	cerr "Your system is missing the required setup. Read the README.md file for more information on how to get started."
 	exit 1
@@ -39,8 +42,8 @@ cd "$PROJECT_DIR/$DUMP1090_DIR"
 DUMP1090_PID=$!
 
 cd "$PROJECT_DIR/$SERVER_DIR"
-uvicorn "$APP" --host "$HOST" --port "$PORT" --reload &
+APP_ENV=development APP_PORT=8000 uvicorn "$APP" --host "$HOST" --port "$PORT" --reload &
 UVICORN_PID=$!
 
-trap "kill $DUMPS1090_PID $UVICORN_PID 2>/dev/null; wait $DUMPS1090_PID $UVICORN_PID 2>/dev/null; deactivate" EXIT INT TERM
-wait $DUMPS1090_PID $UVICORN_PID
+trap "kill $DUMP1090_PID $UVICORN_PID 2>/dev/null; wait $DUMP1090_PID $UVICORN_PID 2>/dev/null; deactivate" EXIT INT TERM
+wait $DUMP1090_PID $UVICORN_PID

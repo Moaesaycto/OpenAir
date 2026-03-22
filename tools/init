@@ -32,7 +32,7 @@ COMMAND_TREE = {
         "__exec__": "./tools/build/build.sh",
     },
     "run": {
-        "__exec__": "",
+        "__exec__": "./tools/dev/start.sh",
         "server": {"__exec__": "./tools/dev/startserver.sh"},
         "client": {"__exec__": "./tools/dev/startclient.sh"},
     },

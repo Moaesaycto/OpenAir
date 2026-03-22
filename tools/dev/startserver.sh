@@ -45,5 +45,11 @@ cd "$PROJECT_DIR/$SERVER_DIR"
 APP_ENV=development APP_PORT=8000 uvicorn "$APP" --host "$HOST" --port "$PORT" --reload &
 UVICORN_PID=$!
 
-trap "kill $DUMP1090_PID $UVICORN_PID 2>/dev/null; wait $DUMP1090_PID $UVICORN_PID 2>/dev/null; deactivate" EXIT INT TERM
+trap "
+kill $DUMP1090_PID $UVICORN_PID 2>/dev/null;
+wait $DUMP1090_PID $UVICORN_PID 2>/dev/null;
+deactivate;
+cdone Server shut down successfully.
+" EXIT INT TERM
+
 wait $DUMP1090_PID $UVICORN_PID

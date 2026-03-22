@@ -8,3 +8,5 @@ q npm install
 
 clog "Starting client server"
 npm run dev
+
+cdone "Client shut down successfully."
